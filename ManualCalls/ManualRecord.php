@@ -65,7 +65,7 @@ class ManualRecord extends Record
         return ($fecha_fin->getTimeStamp() - $fecha_hora->getTimestamp());
     }
 
-    public function getBill($tarifar)
+    public function getBill()
     {
 
         return max(0, $this->getBillSec(), $this->getBillSecProb());

@@ -88,21 +88,16 @@ class ConectorDB{
     *
     */  
     private function modoFetch ($tipo = 0) {
-            
-        if ($tipo == 0){
-            $tipoFetch = PDO::FETCH_ASSOC;
+
+        if ($tipo == 1) {
+            return PDO::FETCH_NUM;
+        } elseif ($tipo == 2) {
+            return PDO::FETCH_BOTH;
+        } elseif ($tipo == 3) {
+            return PDO::FETCH_OBJ;
         }
-        elseif ($tipo == 1){
-            $tipoFetch = PDO::FETCH_NUM;
-        }
-        elseif ($tipo == 2){
-            $tipoFetch = PDO::FETCH_BOTH;
-        }
-        elseif ($tipo == 3){
-            $tipoFetch = PDO::FETCH_OBJ;
-        }
-        
-        return $tipoFetch;
+
+        return PDO::FETCH_ASSOC;
     }
 
     /**

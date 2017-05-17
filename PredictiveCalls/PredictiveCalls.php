@@ -23,13 +23,13 @@ class PredictiveCalls extends CallCenterCalls
     public function parseCall()
     {
         if ($this->record->getRecord()) {
-            if ($this->record->getEstado() == self::ESTADOS['ATENDIDOS']['HANGUP']) {
+            if ($this->record->getEstado() == $this->ESTADOS['ATENDIDOS']['HANGUP']) {
                 if ($this->updateIntegracion($this->registrarMovimiento()) && $this->procesarContactado()) {
                     if (! $this->record->deleteRecord()) {
                         $this->log("Error eliminando el registro {$this->record->getTipo()} [{$this->record->getID()}]");
                     }
                 }
-            } else if($this->verificarEstado($this->record->getEstado(), ['CONTESTADOR'], self::ESTADOS)) {
+            } else if($this->verificarEstado($this->record->getEstado(), ['CONTESTADOR'], $this->ESTADOS)) {
                 if ($this->registrarMovimiento() && $this->procesarNoContactado()) {
                     if (! $this->record->deleteRecord()) {
                         $this->log("Error eliminando el registro {$this->record->getTipo()} [{$this->record->getID()}]");
@@ -39,7 +39,7 @@ class PredictiveCalls extends CallCenterCalls
                 $this->verificarEstado(
                     $this->record->getEstado(),
                     ['NO_CONTESTAN', 'FALLIDOS', 'OCUPADOS'],
-                    self::ESTADOS
+                    $this->ESTADOS
                 )
             ) {
                 if (

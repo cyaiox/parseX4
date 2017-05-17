@@ -14,7 +14,7 @@ class CallCenterCalls
     protected $record;
     protected $db;
     protected $log;
-    const ESTADOS = [
+    public $ESTADOS = [
         'ATENDIDOS' => [
             'ANSWER' => 2,
             'HANGUP' => 10,
@@ -41,7 +41,7 @@ class CallCenterCalls
             20
         ]
     ];
-    const PARSEESTADOS = [
+    public $PARSEESTADOS = [
         -2 => 2,
         2 => 2,
         3 => 3,
@@ -78,14 +78,14 @@ class CallCenterCalls
 
     public function parseEstado($estado)
     {
-        return self::PARSEESTADOS[$estado];
+        return $this->PARSEESTADOS[$estado];
     }
 
     public function registrarMovimiento()
     {
-        if ($this->record->getEstado() == self::ESTADOS['NO_CONTESTAN']['CANCEL'] &&
+        if ($this->record->getEstado() == $this->ESTADOS['NO_CONTESTAN']['CANCEL'] &&
             strtoupper($this->record->getEstadoSoftswitch()) == 'ANSWER') {
-            $this->record->setEstado(self::ESTADOS['ATENDIDOS']['HANGUP']);
+            $this->record->setEstado($this->ESTADOS['ATENDIDOS']['HANGUP']);
         }
 
         $sql = "INSERT INTO OP.movimiento_saldo SET 

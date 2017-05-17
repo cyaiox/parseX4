@@ -1,6 +1,8 @@
 <?php
 
 namespace CallCenter;
+use PDO;
+use PDOException;
 /**
 * 
 */

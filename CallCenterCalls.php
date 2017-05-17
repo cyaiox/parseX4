@@ -69,6 +69,7 @@ class CallCenterCalls
         $this->record = $record;
         $this->db = $db;
         $this->log = $log;
+        $this->record->getRecords();
     }
 
     public function parseCall()

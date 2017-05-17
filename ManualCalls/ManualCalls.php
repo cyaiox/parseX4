@@ -21,7 +21,7 @@ class ManualCalls extends CallCenterCalls
 
     public function parseCall()
     {
-        if ($this->record->getRecord()) {
+        while ($this->record->getRecord()) {
             if ($this->record->getEstado() == $this->ESTADOS['FALLIDOS']['COLGADO']) {
                 $sql = "UPDATE {$this->record->getBase()} SET estado = " . $this->ESTADOS['FALLIDOS']['FAILED'] . " 
                         WHERE idtarea = '{$this->record->getIDTarea()}'";
@@ -34,5 +34,7 @@ class ManualCalls extends CallCenterCalls
                 }
             }
         }
+
+        $this->record->getRecords();
     }
 }

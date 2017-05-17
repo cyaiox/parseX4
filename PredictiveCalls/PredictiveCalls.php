@@ -22,7 +22,7 @@ class PredictiveCalls extends CallCenterCalls
 
     public function parseCall()
     {
-        if ($this->record->getRecord()) {
+        while ($this->record->getRecord()) {
             if ($this->record->getEstado() == $this->ESTADOS['ATENDIDOS']['HANGUP']) {
                 if ($this->updateIntegracion($this->registrarMovimiento()) && $this->procesarContactado()) {
                     if (! $this->record->deleteRecord()) {
@@ -52,5 +52,7 @@ class PredictiveCalls extends CallCenterCalls
                 }
             }
         }
+
+        $this->record->getRecords();
     }
 }

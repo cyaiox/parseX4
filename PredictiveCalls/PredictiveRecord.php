@@ -34,6 +34,7 @@ class PredictiveRecord extends Record
 
         $this->records =  new ArrayObject($this->db->query($sql));
         $this->iterator = $this->records->getIterator();
+        $this->iterator->rewind();
     }
 
     public function deleteRecord()

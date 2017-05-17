@@ -37,8 +37,10 @@ class ManualRecord extends Record
                  LEFT JOIN {$this->campaign_table} C ON C.id = M.id_campania
                  LEFT JOIN OP.Internos I ON I.interno = (if (M.interno = 0, -1, M.interno)
                  WHERE M.estado IN (-3, 3, -4, 4, -5, 5, -6, 6, -7, 7, -8, -9, 9, 10, 17, 15, 31)";
+
         $this->records =  new ArrayObject($this->db->query($sql));
         $this->iterator = $this->records->getIterator();
+        $this->iterator->rewind();
     }
 
     public function deleteRecord()

@@ -20,7 +20,7 @@ class Log
 
     public function log($message, $tipo, $id='')
     {
-        $log_message = Date("[Y-m-d H:i:s]") . "[{$tipo}][{$id}]" . $message;
+        $log_message = Date("[Y-m-d H:i:s]") . "[{$tipo}][{$id}] $message\n";
         file_put_contents($this->file, $log_message, FILE_APPEND | LOCK_EX);
     }
 

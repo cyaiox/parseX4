@@ -136,12 +136,15 @@ class CallCenterCalls
             $this->log->log(
                 "Registro realizado satisfactoriamente en OP.movimiento_saldo con id: [{$this->db->lastInsertId()}]",
                 $this->record->getTipo(),
-                $this->db->lastInsertId()
+                $this->record->getID()
             );
             return $this->db->lastInsertId();
         }
 
-        $this->log->log("Registro no realizado en OP.movimiento_saldo", $this->record->getTipo(), $this->record->getID());
+        $this->log->log(
+            "Registro no realizado en OP.movimiento_saldo",
+            $this->record->getTipo(),
+            $this->record->getID());
         return false;
     }
 
@@ -171,14 +174,25 @@ class CallCenterCalls
                 LIMIT 1";
         $record = $this->db->query($sql);
         $this->log->log(
-            "SQL a realizar {$sql}",
+            "SQL a realizar [{$sql}]",
             $this->record->getTipo(),
             $this->record->getID()
         );
 
         if ($record) {
+            $this->log->log(
+                "ID Gestion obtenido: [{$record[0]['id']}]",
+                $this->record->getTipo(),
+                $this->record->getID()
+            );
             return $record[0]['id'];
         }
+
+        $this->log->log(
+            "No se obtuvo ningun ID Gestion",
+            $this->record->getTipo(),
+            $this->record->getID()
+        );
 
         return false;
     }
@@ -186,14 +200,34 @@ class CallCenterCalls
     public function joinLlamadoGestion($id_movimiento, $id_gestion)
     {
         if ($id_movimiento && $id_gestion) {
+            $this->log->log(
+                "Preparacion para insertar en OP.comunicaciones_gestiones",
+                $this->record->getTipo(),
+                $this->record->getID()
+            );
             $sql = "INSERT INTO OP.comunicaciones_gestiones 
                     SET comunicaciones_tabla = 'movimiento_saldo', 
                         id_comunicacion = '{$id_movimiento}', 
                         id_gestion = '{$id_gestion}'";
-            return $this->db->query($sql);
+            $this->log->log(
+                "SQL a realizar [{$sql}]",
+                $this->record->getTipo(),
+                $this->record->getID()
+            );
+            if ($this->db->query($sql)) {
+                $this->log->log(
+                    "Insert realizado satisfactoriamente",
+                    $this->record->getTipo(),
+                    $this->record->getID()
+                );
+            } else {
+                $this->log->log(
+                    "Error en la insercion con id_movimiento: [{$id_movimiento}] e id_gestion: [{$id_gestion}]",
+                    $this->record->getTipo(),
+                    $this->record->getID()
+                );
+            }
         }
-
-        return false;
     }
 
     public function updateIntegracion($id_movimiento)

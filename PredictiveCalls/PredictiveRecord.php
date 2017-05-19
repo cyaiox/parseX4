@@ -50,22 +50,36 @@ class PredictiveRecord extends Record
 
     public function getBill()
     {
-        $fecha_inicio = new DateTime($this->fecha_inicio_talking);
-        $fecha_fin = new DateTime($this->fecha_fin);
-        return max(0, ($fecha_fin->getTimeStamp() - $fecha_inicio->getTimestamp()));
+        if ($this->fecha_inicio_talking && $this->fecha_fin) {
+            $fecha_inicio = new DateTime($this->fecha_inicio_talking);
+            $fecha_fin = new DateTime($this->fecha_fin);
+            return ($fecha_fin->getTimeStamp() - $fecha_inicio->getTimestamp());
+        }
+
+        return 0;
     }
 
     public function getHoldingSec()
     {
-        $fecha_inicio = new DateTime($this->fecha_inicio);
-        $fecha_fin = new DateTime($this->fecha_inicio_talking);
-        return max(0, ($fecha_fin->getTimeStamp() - $fecha_inicio->getTimestamp()));
+        if ($this->fecha_inicio && $this->fecha_inicio_talking) {
+            $fecha_inicio = new DateTime($this->fecha_inicio);
+            $fecha_fin = new DateTime($this->fecha_inicio_talking);
+
+            return ($fecha_fin->getTimeStamp() - $fecha_inicio->getTimestamp());
+        }
+
+        return 0;
     }
 
     public function getHoldingSecFailed()
     {
-        $fecha_inicio = new DateTime($this->fecha_inicio);
-        $fecha_fin = new DateTime($this->fecha_fin);
-        return max(0, ($fecha_fin->getTimeStamp() - $fecha_inicio->getTimestamp()));
+        if ($this->fecha_inicio && $this->fecha_fin) {
+            $fecha_inicio = new DateTime($this->fecha_inicio);
+            $fecha_fin = new DateTime($this->fecha_fin);
+
+            return ($fecha_fin->getTimeStamp() - $fecha_inicio->getTimestamp());
+        }
+
+        return 0;
     }
 }

@@ -130,7 +130,7 @@ class CallCenterCalls
                   test_pid = '',
                   test_usuario = '', 
                   formato_discado = '{$this->record->getFormatoDiscado()}',
-                  parse = '1'";
+                  parse = 1";
         $this->log->log("SQL a realizar: [{$sql}]", $this->record->getTipo(), $this->record->getID());
         if($this->db->query($sql)) {
             $this->log->log(

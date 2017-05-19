@@ -55,22 +55,31 @@ class ManualRecord extends Record
 
     public function getBillSec()
     {
-        $fecha_inicio = new DateTime($this->fecha_inicio);
-        $fecha_fin = new DateTime($this->fecha_fin);
-        return ($fecha_fin->getTimeStamp() - $fecha_inicio->getTimestamp());
+        if ($this->fecha_inicio && $this->fecha_inicio != '0000-00-00 00:00:00' && $this->fecha_fin) {
+            $fecha_inicio = new DateTime($this->fecha_inicio);
+            $fecha_fin = new DateTime($this->fecha_fin);
+
+            return ($fecha_fin->getTimeStamp() - $fecha_inicio->getTimestamp());
+        }
+
+        return 0;
     }
 
     public function getBillSecProb()
     {
-        $fecha_fin = new DateTime($this->fecha_fin);
-        $fecha_hora = new DateTime($this->fecha_inicio_talking);
-        return ($fecha_fin->getTimeStamp() - $fecha_hora->getTimestamp());
+        if ($this->fecha_inicio_talking && $this->fecha_inicio_talking != '0000-00-00 00:00:00' && $this->fecha_fin) {
+            $fecha_hora = new DateTime($this->fecha_inicio_talking);
+            $fecha_fin = new DateTime($this->fecha_fin);
+
+            return ($fecha_fin->getTimeStamp() - $fecha_hora->getTimestamp());
+        }
+
+        return 0;
     }
 
     public function getBill()
     {
-
-        return max(0, $this->getBillSec(), $this->getBillSecProb());
+        return max($this->getBillSec(), $this->getBillSecProb());
     }
 
     public function getPin()

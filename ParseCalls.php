@@ -14,13 +14,13 @@ class ParseCalls
     protected $process_name = 'parseX4';
     protected $delay;
 
-    public function __construct($delay=5)
+    public function __construct($delay)
     {
         $this->delay = $delay;
         $this->closePreviousRunningProcesses();
     }
 
-    public function start(CallCenterCalls $manual_calls, CallCenterCalls $predictive_calls)
+    public function start(ManualCalls\ManualCalls $manual_calls, PredictiveCalls\PredictiveCalls $predictive_calls)
     {
         while (true) {
             $manual_calls->parseCall();

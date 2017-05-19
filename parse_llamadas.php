@@ -30,6 +30,6 @@ $predictive_call = new PredictiveCalls\PredictiveCalls($record_predictive, $db, 
 $record_manual = new ManualCalls\ManualRecord($db, 'asterisk.cc_manual');
 $manual_call = new ManualCalls\ManualCalls($record_manual, $db, $log_manual_call);
 
-$parse = new ParseCalls();
+$parse = new ParseCalls(5);
 
 $parse->start($manual_call, $predictive_call);

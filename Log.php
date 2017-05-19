@@ -18,9 +18,9 @@ class Log
         $this->file = $file;
     }
 
-    public function log($message)
+    public function log($message, $tipo, $id='')
     {
-        $log_message = Date("[Y-m-d H:i:s]") . $message;
+        $log_message = Date("[Y-m-d H:i:s]") . "[{$tipo}][{$id}]" . $message;
         file_put_contents($this->file, $log_message, FILE_APPEND | LOCK_EX);
     }
 

@@ -22,15 +22,30 @@ class PredictiveCalls extends CallCenterCalls
 
     public function parseCall()
     {
+        parent::parseCall();
         while ($this->record->getRecord()) {
+            $this->log(
+                "Record obtenido correctamente de asterisk.cc_predictivo con id: [{$this->record->getID()}]",
+                $this->record->getTipo()
+            );
+            $this->log(
+                "[{$this->record->getID()}]Record con estado [{$this->record->getEstado()}]",
+                $this->record->getTipo()
+            );
             if ($this->record->getEstado() == $this->ESTADOS['ATENDIDOS']['HANGUP']) {
                 if ($this->updateIntegracion($this->registrarMovimiento()) && $this->procesarContactado()) {
+                    $this->log("Record contactado procesado correctamente", $this->record->getTipo(), $this->record->getID());
                     if (! $this->record->deleteRecord()) {
-                        $this->log("Error eliminando el registro {$this->record->getTipo()} [{$this->record->getID()}]");
+                        $this->log("Error eliminando el registro", $this->record->getTipo(), $this->record->getID());
                     }
                 }
             } else if($this->verificarEstado($this->record->getEstado(), ['CONTESTADOR'], $this->ESTADOS)) {
                 if ($this->registrarMovimiento() && $this->procesarNoContactado()) {
+                    $this->log(
+                        "Record no contactado procesado correctamente",
+                        $this->record->getTipo(),
+                        $this->record->getID()
+                    );
                     if (! $this->record->deleteRecord()) {
                         $this->log("Error eliminando el registro {$this->record->getTipo()} [{$this->record->getID()}]");
                     }

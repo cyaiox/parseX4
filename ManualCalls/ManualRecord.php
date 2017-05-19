@@ -19,9 +19,9 @@ class ManualRecord extends Record
     protected $tipo = 'manual';
     protected $pin_interno;
 
-    public function __construct(ConectorDB $db)
+    public function __construct(ConectorDB $db, $table)
     {
-        parent::__construct($db, $this->table);
+        parent::__construct($db, $table);
     }
 
     public function getRecords()

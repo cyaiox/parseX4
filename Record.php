@@ -131,6 +131,11 @@ class Record
         return $this->tipo;
     }
 
+    public function getTable()
+    {
+        return $this->table;
+    }
+
     public function getIDDestino()
     {
         return $this->id_destino;

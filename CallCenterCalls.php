@@ -74,7 +74,7 @@ class CallCenterCalls
 
     public function parseCall()
     {
-        $this->log("Empezando el parseCall de llamados [{$this->record->getTipo()}]", $this->record->getTipo());
+        $this->log->log("Empezando el parseCall de llamados [{$this->record->getTipo()}]", $this->record->getTipo());
     }
 
     public function parseEstado($estado)
@@ -84,7 +84,7 @@ class CallCenterCalls
 
     public function registrarMovimiento()
     {
-        $this->log(
+        $this->log->log(
             "Preparacion para realizar el registro en OP.movimiento_saldo",
             $this->record->getTipo(),
             $this->record->getID()
@@ -93,13 +93,13 @@ class CallCenterCalls
             $this->record->getEstado() == $this->ESTADOS['NO_CONTESTAN']['CANCEL'] &&
             strtoupper($this->record->getEstadoSoftswitch()) == 'ANSWER'
         ) {
-            $this->log(
+            $this->log->log(
                 "Registro con estado: [{$this->ESTADOS['NO_CONTESTAN']['CANCEL']}] y estado del softswitch: [ANSWER]",
                 $this->record->getTipo(),
                 $this->record->getID()
             );
             $this->record->setEstado($this->ESTADOS['ATENDIDOS']['HANGUP']);
-            $this->log(
+            $this->log->log(
                 "Estado seteado en [{$this->ESTADOS['ATENDIDOS']['HANGUP']}] para guardar en OP.movimiento_saldo",
                 $this->record->getTipo(),
                 $this->record->getID()
@@ -131,9 +131,9 @@ class CallCenterCalls
                   test_usuario = '', 
                   formato_discado = '{$this->record->getFormatoDiscado()}',
                   parse = 1";
-        $this->log("SQL a realizar: [{$sql}]", $this->record->getTipo(), $this->record->getID());
+        $this->log->log("SQL a realizar: [{$sql}]", $this->record->getTipo(), $this->record->getID());
         if($this->db->query($sql)) {
-            $this->log(
+            $this->log->log(
                 "Registro realizado satisfactoriamente en OP.movimiento_saldo con id: [{$this->db->lastInsertId()}]",
                 $this->record->getTipo(),
                 $this->db->lastInsertId()
@@ -141,7 +141,7 @@ class CallCenterCalls
             return $this->db->lastInsertId();
         }
 
-        $this->log("Registro no realizado en OP.movimiento_saldo", $this->record->getTipo(), $this->record->getID());
+        $this->log->log("Registro no realizado en OP.movimiento_saldo", $this->record->getTipo(), $this->record->getID());
         return false;
     }
 
@@ -197,7 +197,7 @@ class CallCenterCalls
 
     public function procesarContactado()
     {
-        $this->log(
+        $this->log->log(
             "Preparacion para realizar la actualizacion en [{$this->record->getBase()}]",
             $this->record->getTipo(),
             $this->record->getID()
@@ -205,7 +205,7 @@ class CallCenterCalls
         $sql = "UPDATE {$this->record->getBase()} 
                 SET estado = '{$this->record->getEstado()}', repite_resultado = 0
                 WHERE idtarea = '{$this->record->getIDTarea()}'";
-        $this->log("SQL a realizar: [{$sql}]", $this->record->getTipo(), $this->record->getID());
+        $this->log->log("SQL a realizar: [{$sql}]", $this->record->getTipo(), $this->record->getID());
         return $this->db->query($sql);
     }
 

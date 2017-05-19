@@ -23,15 +23,35 @@ class ManualCalls extends CallCenterCalls
     {
         parent::parseCall();
         while ($this->record->getRecord()) {
+            $this->log->log(
+                "Record obtenido correctamente de {$this->record->getTable()}",
+                $this->record->getTipo(),
+                $this->record->getID()
+            );
+            $this->log->log(
+                "Record con estado [{$this->record->getEstado()}]",
+                $this->record->getTipo(),
+                $this->record->getID()
+            );
             if ($this->record->getEstado() == $this->ESTADOS['FALLIDOS']['COLGADO']) {
                 $sql = "UPDATE {$this->record->getBase()} SET estado = " . $this->ESTADOS['FALLIDOS']['FAILED'] . " 
                         WHERE idtarea = '{$this->record->getIDTarea()}'";
                 $this->db->query($sql);
+                $this->log->log(
+                    "Actualizar Record en la base [{$this->record->getBase()}]",
+                    $this->record->getTipo(),
+                    $this->record->getID()
+                );
             }
 
             if ($this->joinLlamadoGestion($this->registrarMovimiento(), $this->getIDGestion())) {
+                $this->log->log(
+                    "Record procesado correctamente",
+                    $this->record->getTipo(),
+                    $this->record->getID()
+                );
                 if (! $this->record->deleteRecord()) {
-                    $this->log("Error eliminando el registro {$this->record->getTipo()} [{$this->record->getID()}]");
+                    $this->log->log("Error eliminando el registro {$this->record->getTipo()} [{$this->record->getID()}]");
                 }
             }
         }

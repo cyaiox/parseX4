@@ -160,11 +160,21 @@ class CallCenterCalls
 
     public function getIDGestion()
     {
+        $this->log->log(
+            "Obteniendo ID Gestion",
+            $this->record->getTipo(),
+            $this->record->getID()
+        );
         $sql = "SELECT id FROM asterisk.cc_integracion 
                 WHERE id_agente = '{$this->record->getIDAgente()}' 
                   AND (primer_plano = 1 OR telefono = '{$this->record->getTelefono()}') 
                 LIMIT 1";
         $record = $this->db->query($sql);
+        $this->log->log(
+            "SQL a realizar {$sql}",
+            $this->record->getTipo(),
+            $this->record->getID()
+        );
 
         if ($record) {
             return $record[0]['id'];

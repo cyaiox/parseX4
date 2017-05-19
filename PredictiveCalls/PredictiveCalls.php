@@ -67,10 +67,8 @@ class PredictiveCalls extends CallCenterCalls
                     $this->ESTADOS
                 )
             ) {
-                if (
-                    $this->joinLlamadoGestion($this->registrarMovimiento(), $this->getIDGestion()) &&
-                    $this->procesarNoContactado()
-                ) {
+                $this->joinLlamadoGestion($this->registrarMovimiento(), $this->getIDGestion());
+                if ($this->procesarNoContactado()) {
                     if (! $this->record->deleteRecord()) {
                         $this->log->log(
                             "Error eliminando el registro",

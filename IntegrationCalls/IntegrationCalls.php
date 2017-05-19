@@ -29,14 +29,13 @@ class IntegrationCalls extends CallCenterCalls
                 $this->record->getTipo(),
                 $this->record->getID()
             );
-            if ($this->joinLlamadoGestion($this->record->getIDMovimientoSaldo(), $this->record->getIDGestion())) {
-                if (! $this->record->deleteRecord()) {
-                    $this->log->log(
-                        "Error eliminando el registro",
-                        $this->record->getTipo(),
-                        $this->record->getID()
-                    );
-                }
+
+            if (! $this->record->deleteRecord()) {
+                $this->log->log(
+                    "Error eliminando el registro",
+                    $this->record->getTipo(),
+                    $this->record->getID()
+                );
             }
         }
 

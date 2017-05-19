@@ -36,12 +36,9 @@ class IntegrationRecord extends Record
 
     public function deleteRecord()
     {
-        if ($this->id) {
-            $sql = "DELETE FROM {$this->table} WHERE id = '{$this->id}'";
-            return $this->db->query($sql);
-        }
+        $sql = "DELETE FROM {$this->table} WHERE id = '{$this->id}'";
 
-        return false;
+        return $this->db->query($sql);
     }
 
     public function getIDMovimientoSaldo()

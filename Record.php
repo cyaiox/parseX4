@@ -22,6 +22,7 @@ class Record
     protected $id_tarea;
     protected $id_base;
     protected $base;
+    protected $backoffice;
     protected $id_grabaciones;
     protected $unique_id;
     protected $telefono;
@@ -88,11 +89,21 @@ class Record
         return $this->base;
     }
 
+    public function getBackOffice()
+    {
+        if (! $this->backoffice) {
+            $sql = "SELECT tabla_backoffice FROM {$this->campaign_table} WHERE id = '$$this->id_campania'";
+            $record = $this->db->query($sql);
+            $this->base = $record['tabla_backoffice'];
+        }
+
+        return $this->backoffice;
+    }
+
     public function getID()
     {
         return $this->id;
     }
-
 
     public function getBill()
     {
@@ -134,6 +145,11 @@ class Record
     public function getTable()
     {
         return $this->table;
+    }
+
+    public function getCampaignTable()
+    {
+        return $this->campaign_table;
     }
 
     public function getIDDestino()

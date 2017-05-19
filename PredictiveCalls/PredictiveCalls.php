@@ -68,14 +68,13 @@ class PredictiveCalls extends CallCenterCalls
                 )
             ) {
                 $this->joinLlamadoGestion($this->registrarMovimiento(), $this->getIDGestion());
-                if ($this->procesarNoContactado()) {
-                    if (! $this->record->deleteRecord()) {
-                        $this->log->log(
-                            "Error eliminando el registro",
-                            $this->record->getTipo(),
-                            $this->record->getID()
-                        );
-                    }
+                $this->procesarNoContactado();
+                if (! $this->record->deleteRecord()) {
+                    $this->log->log(
+                        "Error eliminando el registro",
+                        $this->record->getTipo(),
+                        $this->record->getID()
+                    );
                 }
             }
         }

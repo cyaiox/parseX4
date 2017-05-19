@@ -83,7 +83,7 @@ class Record
         if (! $this->base) {
             $sql = "SELECT tabla_prospectos FROM asterisk.bases WHERE id_extra = '{$this->id_base}'";
             $record = $this->db->query($sql);
-            $this->base = $record['tabla_prospectos'];
+            $this->base = $record[0]['tabla_prospectos'];
         }
 
         return $this->base;
@@ -94,7 +94,7 @@ class Record
         if (! $this->backoffice) {
             $sql = "SELECT tabla_backoffice FROM {$this->campaign_table} WHERE id = '$$this->id_campania'";
             $record = $this->db->query($sql);
-            $this->base = $record['tabla_backoffice'];
+            $this->base = $record[0]['tabla_backoffice'];
         }
 
         return $this->backoffice;

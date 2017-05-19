@@ -255,6 +255,11 @@ class CallCenterCalls
 
     public function procesarNoContactado()
     {
+        $this->log->log(
+            "Preparacion para procesar los no contactados en [{$this->record->getBase()}]",
+            $this->record->getTipo(),
+            $this->record->getID()
+        );
         $sql = "UPDATE {$this->record->getBase()} 
                 SET procesar = 9, 
                     subprocesar = NULL, 
@@ -263,11 +268,16 @@ class CallCenterCalls
                     repite_resultado = repite_resultado + 1 
                 WHERE idtarea = '{$this->record->getIDTarea()}'
                 AND estado = {$this->record->getEstado()}";
+        $this->log->log(
+            "SQL a realizar [{$sql}]",
+            $this->record->getTipo(),
+            $this->record->getID()
+        );
         $this->db->query($sql);
 
         # $this->setAgendadaPerdida();
 
-        return $this->verAgendadoSinContactar($this->esModoPropietaria());
+        $this->verAgendadoSinContactar($this->esModoPropietaria());
     }
 
     public function setAgendadaPerdida()
@@ -280,9 +290,19 @@ class CallCenterCalls
 
     public function esModoPropietaria()
     {
+        $this->log->log(
+            "Saber si la llamada agendada es propietaria",
+            $this->record->getTipo(),
+            $this->record->getID()
+        );
         $sql = "SELECT id_agendado 
                 FROM OP.agendados_agente 
                 WHERE id_agendado = '{$this->record->getIDAgendado()}' AND modo_agenda = '0'";
+        $this->log->log(
+            "SQL a realizar [{$sql}]",
+            $this->record->getTipo(),
+            $this->record->getID()
+        );
         $record = $this->db->query($sql);
 
         if ($record) {
@@ -306,10 +326,19 @@ class CallCenterCalls
 
     public function verAgendadoSinContactar($es_propietaria)
     {
+        $this->log->log(
+            "Preparacion para realizar la actualizacion en asterisk.queue_login",
+            $this->record->getTipo(),
+            $this->record->getID()
+        );
         $sql = "UPDATE asterisk.queue_login 
                 SET estado = '" . (($es_propietaria) ? 'IN' : 'OUT') . "' 
                 WHERE id_agente = '{$this->record->getIDAgente()}' AND estado = 'AGENDA'";
-
-        return $this->db->query($sql);
+        $this->log->log(
+            "SQL a realizar [{$sql}]",
+            $this->record->getTipo(),
+            $this->record->getID()
+        );
+        $this->db->query($sql);
     }
 }

@@ -51,7 +51,11 @@ class ManualCalls extends CallCenterCalls
                     $this->record->getID()
                 );
                 if (! $this->record->deleteRecord()) {
-                    $this->log->log("Error eliminando el registro {$this->record->getTipo()} [{$this->record->getID()}]");
+                    $this->log->log(
+                        "Error eliminando el registro",
+                        $this->record->getTipo(),
+                        $this->record->getID()
+                    );
                 }
             }
         }

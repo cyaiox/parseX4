@@ -7,6 +7,7 @@
  */
 
 namespace CallCenter;
+use DateTime;
 
 
 class CallCenterCalls
@@ -107,7 +108,7 @@ class CallCenterCalls
         }
 
         $sql = "INSERT INTO OP.movimiento_saldo SET 
-                  valor = {$this->record->getPrecio()}, 
+                  valor = -{$this->record->getCostoLlamado()}, 
                   id_canal = '{$this->record->getIDCanal()}', 
                   id_destinos_softswitch = '{$this->record->getIDDestinosSoftSwitch()}', 
                   telefono = '{$this->record->getTelefono()}', 
@@ -341,5 +342,48 @@ class CallCenterCalls
                 $this->db->query($sql);
             }
         }
+    }
+
+    public function tarifar()
+    {
+        if ($this->record->getSaldo()) {
+            $sql = "SELECT (TIMESTAMPDIFF(MINUTE, inicio_com, fin_com) + 1) AS minutos 
+                    FROM {$this->record->getBase()} 
+                    WHERE idtarea = '{$this->record->getIDTarea()}'
+                    AND inicio_com <> '0000-00-00 00:00:00' AND inicio_com IS NOT NULL
+                    AND fin_com <> '0000-00-00 00:00:00' AND fin_com IS NOT NULL";
+
+            $record = $this->db->query($sql);
+
+            if ($record) {
+                $costo_llamado = $this->costoLlamado($record[0]['minutos'], $this->record->getValorLlamado());
+                $saldo = $this->record->getSaldo() - $costo_llamado;
+                $sql = "UPDATE OP.clientes 
+                        SET valor = -{$costo_llamado},
+                            saldo = {$saldo},
+                            id_canal = {$this->record->getIDCanal()},
+                            estado = 1,
+                            telefono = '{$this->record->getTelefono()}',
+                            idcampania = '{$this->record->getIDCampania()}', 
+                            id_agente = '{$this->record->getIDAgente()}', 
+                            id_grabaciones = '{$this->record->getIDGrabaciones()}', 
+                            talking_time = '{$record[0]['minutos']}' 
+                        WHERE pin = '{$this->record->getPin()}'";
+                $this->db->query($sql);
+
+                $this->record->setCostoLlamado($costo_llamado);
+            }
+        }
+
+        return false;
+    }
+
+    public function costoLlamado($minutos, $costo)
+    {
+        if ($this->record->getTipoCliente() == 2) {
+            return $minutos;
+        }
+
+        return ($minutos * $costo);
     }
 }

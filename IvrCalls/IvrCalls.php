@@ -93,7 +93,7 @@ class IvrCalls extends CallCenterCalls
             $this->record->getID()
         );
         $sql = "UPDATE {$this->record->getBase()} 
-                        SET estado = $this->record->getEstado()
+                        SET estado = {$this->record->getEstado()}
                         WHERE idtarea = '{$this->record->getIDTarea()}'";
         $this->log->log("SQL a realizar: [{$sql}]", $this->record->getTipo(), $this->record->getID());
         return $this->db->query($sql);

@@ -36,6 +36,8 @@ class PredictiveCalls extends CallCenterCalls
             );
             if ($this->record->getEstado() == $this->ESTADOS['ATENDIDOS']['HANGUP']) {
                 if ($this->updateIntegracion($this->registrarMovimiento()) && $this->procesarContactado()) {
+                    $this->setTime('interno', $this->record->getInterno());
+                    $this->setTime('id_agente', $this->record->getIDAgente());
                     $this->log->log(
                         "Record contactado procesado correctamente",
                         $this->record->getTipo(),
@@ -46,7 +48,8 @@ class PredictiveCalls extends CallCenterCalls
                     }
                 }
             } else if($this->verificarEstado($this->record->getEstado(), ['CONTESTADOR'], $this->ESTADOS)) {
-                if ($this->registrarMovimiento() && $this->procesarNoContactado()) {
+                $this->procesarNoContactado();
+                if ($this->registrarMovimiento()) {
                     $this->log->log(
                         "Record no contactado procesado correctamente",
                         $this->record->getTipo(),
@@ -67,7 +70,7 @@ class PredictiveCalls extends CallCenterCalls
                     $this->ESTADOS
                 )
             ) {
-                $this->joinLlamadoGestion($this->registrarMovimiento(), $this->getIDGestion());
+                $this->joinLlamadoGestion($this->registrarMovimiento(), $this->record->getIDGestion());
                 $this->procesarNoContactado();
                 if (! $this->record->deleteRecord()) {
                     $this->log->log(

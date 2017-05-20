@@ -7,10 +7,12 @@ require "./ParseCalls.php";
 require "./CallCenterCalls.php";
 require "./ManualCalls/ManualCalls.php";
 require "./PredictiveCalls/PredictiveCalls.php";
+require "./InboundCalls/InboundCalls.php";
 require "./conectorDB.php";
 require "./Record.php";
 require "./ManualCalls/ManualRecord.php";
 require "./PredictiveCalls/PredictiveRecord.php";
+require "./InboundCalls/InboundRecord.php";
 require './KillProcess.php';
 
 $ini_file = parse_ini_file('/etc/microvoz/sistema.ini', true);

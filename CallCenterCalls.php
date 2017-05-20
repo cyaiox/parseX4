@@ -161,42 +161,6 @@ class CallCenterCalls
         return array_reduce($estados, $buscar_estado, false);
     }
 
-    public function getIDGestion()
-    {
-        $this->log->log(
-            "Obteniendo ID Gestion",
-            $this->record->getTipo(),
-            $this->record->getID()
-        );
-        $sql = "SELECT id FROM asterisk.cc_integracion 
-                WHERE id_agente = '{$this->record->getIDAgente()}' 
-                  AND (primer_plano = 1 OR telefono = '{$this->record->getTelefono()}') 
-                LIMIT 1";
-        $record = $this->db->query($sql);
-        $this->log->log(
-            "SQL a realizar [{$sql}]",
-            $this->record->getTipo(),
-            $this->record->getID()
-        );
-
-        if ($record) {
-            $this->log->log(
-                "ID Gestion obtenido: [{$record[0]['id']}]",
-                $this->record->getTipo(),
-                $this->record->getID()
-            );
-            return $record[0]['id'];
-        }
-
-        $this->log->log(
-            "No se obtuvo ningun ID Gestion",
-            $this->record->getTipo(),
-            $this->record->getID()
-        );
-
-        return false;
-    }
-
     public function joinLlamadoGestion($id_movimiento, $id_gestion)
     {
         if ($id_movimiento && $id_gestion) {
@@ -220,6 +184,7 @@ class CallCenterCalls
                     $this->record->getTipo(),
                     $this->record->getID()
                 );
+                return true;
             } else {
                 $this->log->log(
                     "Error en la insercion con id_movimiento: [{$id_movimiento}] e id_gestion: [{$id_gestion}]",
@@ -228,13 +193,15 @@ class CallCenterCalls
                 );
             }
         }
+
+        return false;
     }
 
     public function updateIntegracion($id_movimiento)
     {
         $sql = "UPDATE asterisk.cc_integracion 
                 SET id_movimiento = '{$id_movimiento}' 
-                WHERE id_tarea = '{$this->record->getIDTarea()}' AND id_base = '{$this->record->getIDBase()}'";
+                WHERE id = {$this->record->getIDGestion()}";
 
         return $this->db->query($sql);
     }
@@ -340,5 +307,30 @@ class CallCenterCalls
             $this->record->getID()
         );
         $this->db->query($sql);
+    }
+
+    public function setTime($search_field, $search_value)
+    {
+        $sql = "UPDATE asterisk.entrantes SET gap_time = NOW() WHERE {$search_field} = '{$search_value}'";
+        $this->db->query($sql);
+    }
+
+    public function setPenalty($search_field, $search_value)
+    {
+        $sql = "SELECT max(penalty) AS maxpenalty, id_campania
+                FROM asterisk.entrantes
+                WHERE {$search_field} = {$search_value}
+                GROUP BY id_campania";
+        $records = $this->db->query($sql);
+
+        if ($records) {
+            foreach ($records as $record) {
+                $record['maxpenalty'] += 1;
+                $sql = "UPDATE asterisk.entrantes 
+                        SET penalty = {$record['maxpenalty']} 
+                        WHERE {$search_field} = '{$search_value}' AND id_campania = '{$record['id_campania']}'";
+                $this->db->query($sql);
+            }
+        }
     }
 }

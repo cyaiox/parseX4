@@ -82,7 +82,11 @@ class ManualRecord extends Record
 
     public function getPin()
     {
-        return max($this->pin, $this->pin_interno);
+        if (isset($this->pin)) {
+            return $this->pin;
+        }
+
+        return $this->pin_interno;
     }
 
     public function getHoldingSec()

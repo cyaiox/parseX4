@@ -33,6 +33,7 @@ class Record
     protected $id_agente;
     protected $interno;
     protected $pin;
+    protected $pin_padre;
     protected $channel;
     protected $billsec;
     protected $id_agendado;
@@ -43,6 +44,11 @@ class Record
     protected $fecha_inicio_talking;
     protected $tipo;
     protected $id_destino = 0;
+    protected $saldo;
+    protected $id_moneda;
+    protected $tipo_cliente;
+    protected $costo_llamado;
+    protected $valor_llamado = 0;
 
     public function __construct(ConectorDB $db, $table)
     {
@@ -77,27 +83,38 @@ class Record
         {
             $this->$key = $value;
         }
+
+        $this->initBase();
+        $this->initBackOffice();
+        $this->initIDDestino();
+        $this->getParametrosTarificar();
     }
 
-    public function getBase()
+    protected function initBase()
     {
         if (! $this->base) {
             $sql = "SELECT tabla_prospectos FROM asterisk.bases WHERE id_extra = '{$this->id_base}'";
             $record = $this->db->query($sql);
             $this->base = $record[0]['tabla_prospectos'];
         }
+    }
 
+    public function getBase()
+    {
         return $this->base;
+    }
+
+    protected function initBackOffice()
+    {
+        if (! $this->backoffice) {
+            $sql = "SELECT tabla_backoffice FROM {$this->campaign_table} WHERE id = '{$this->id_campania}'";
+            $record = $this->db->query($sql);
+            $this->base = $record[0]['tabla_backoffice'];
+        }
     }
 
     public function getBackOffice()
     {
-        if (! $this->backoffice) {
-            $sql = "SELECT tabla_backoffice FROM {$this->campaign_table} WHERE id = '$$this->id_campania'";
-            $record = $this->db->query($sql);
-            $this->base = $record[0]['tabla_backoffice'];
-        }
-
         return $this->backoffice;
     }
 
@@ -161,6 +178,38 @@ class Record
     public function getIDDestino()
     {
         return $this->id_destino;
+    }
+
+    public function setIDDestino($id_destino)
+    {
+        $this->id_destino = $id_destino;
+    }
+
+    protected function initIDDestino()
+    {
+        $sql = "SELECT idDestino AS id_destino, Caracteristica AS digitos 
+                FROM asterisk.Destino 
+                WHERE pin = '{$this->pin_padre}' 
+                AND Nombre = 'local'
+                AND Caracteristica = LENGTH('{$this->telefono}')";
+
+        $record = $this->db->query($sql);
+
+        if ($record) {
+            $this->id_destino = $record[0]['id_destino'];
+        } else {
+            $sql = "SELECT idDestino AS id_destino, Caracteristica AS digitos
+                    FROM asterisk.Destino 
+                    WHERE pin = '{$this->pin_padre}' 
+                    AND Nombre <> 'local' 
+                    AND Caracteristica = LEFT('{$this->telefono}', LENGTH(Caracteristica))
+                    ORDER BY idDestino DESC";
+
+            $record = $this->db->query($sql);
+            if ($record) {
+                $this->id_destino = $record[0]['id_destino'];
+            }
+        }
     }
 
     public function getInterno()
@@ -235,8 +284,74 @@ class Record
         return max(0, ($this->getBill() + $this->getHoldingSec()));
     }
 
-    public function getPrecio()
+    public function getPinPadre()
     {
-        return max(0, 0);
+        if (! isset($this->pin_padre)) {
+            $sql = "SELECT padre from OP.clientes where pin = {$this->pin}";
+            $record = $this->db->query($sql);
+
+            if ($record) {
+                $this->pin_padre = $record[0]['padre'];
+            }
+        }
+
+        return $this->pin_padre;
+    }
+
+    protected function getParametrosTarificar()
+    {
+        $sql = "SELECT saldo, idMoneda AS id_moneda, tipo_cliente 
+                FROM OP.clientes 
+                WHERE pin = '{$this->pin}'";
+
+        $record = $this->db->query($sql);
+
+        if ($record) {
+            $this->saldo = $record[0]['saldo'];
+            $this->id_moneda = $record[0]['id_moneda'];
+            $this->tipo_cliente = $record[0]['tipo_cliente'];
+        }
+
+        $sql = "SELECT valor 
+                FROM Tarifa 
+                WHERE idMoneda = '{$this->id_moneda}' 
+                AND idDestino = '{$this->id_destino}' 
+                AND idTarifa IN (SELECT idTarifa FROM Tarifa_cliente WHERE pin = '{$this->pin}')";
+
+        $record = $this->db->query($sql);
+
+        if ($record) {
+            $this->valor_llamado = $record[0]['valor'];
+        }
+    }
+
+    public function getSaldo()
+    {
+        return $this->saldo;
+    }
+
+    public function getIDMoneda()
+    {
+        return $this->id_moneda;
+    }
+
+    public function getTipoCliente()
+    {
+        return $this->tipo_cliente;
+    }
+
+    public function getValorLlamado()
+    {
+        return $this->valor_llamado;
+    }
+
+    public function getCostoLlamado()
+    {
+        return $this->costo_llamado;
+    }
+
+    public function setCostoLlamado($costo_llamado)
+    {
+        $this->costo_llamado = $costo_llamado;
     }
 }

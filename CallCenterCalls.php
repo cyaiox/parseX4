@@ -199,10 +199,19 @@ class CallCenterCalls
 
     public function updateIntegracion($id_movimiento)
     {
+        $this->log->log(
+            "Preparacion para actualizar asterisk.cc_integracion",
+            $this->record->getTipo(),
+            $this->record->getID()
+        );
         $sql = "UPDATE asterisk.cc_integracion 
                 SET id_movimiento = '{$id_movimiento}' 
                 WHERE id = {$this->record->getIDGestion()}";
-
+        $this->log->log(
+            "SQL a realizar [{$sql}]",
+            $this->record->getTipo(),
+            $this->record->getID()
+        );
         return $this->db->query($sql);
     }
 

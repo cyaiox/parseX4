@@ -18,6 +18,7 @@ class Record
     protected $campaign_table = 'asterisk.campanias';
     protected $db;
     protected $id;
+    protected $id_gestion;
     protected $id_campania;
     protected $id_tarea;
     protected $id_base;
@@ -103,6 +104,11 @@ class Record
     public function getID()
     {
         return $this->id;
+    }
+
+    public function getIDGestion()
+    {
+        return $this->id_gestion;
     }
 
     public function getBill()

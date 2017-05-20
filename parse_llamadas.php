@@ -8,11 +8,13 @@ require "./CallCenterCalls.php";
 require "./ManualCalls/ManualCalls.php";
 require "./PredictiveCalls/PredictiveCalls.php";
 require "./InboundCalls/InboundCalls.php";
+require "./IvrCalls/IvrCalls.php";
 require "./conectorDB.php";
 require "./Record.php";
 require "./ManualCalls/ManualRecord.php";
 require "./PredictiveCalls/PredictiveRecord.php";
 require "./InboundCalls/InboundRecord.php";
+require "./IvrCalls/IvrRecord.php";
 require './KillProcess.php';
 
 $ini_file = parse_ini_file('/etc/microvoz/sistema.ini', true);
@@ -20,6 +22,7 @@ $ini_file = parse_ini_file('/etc/microvoz/sistema.ini', true);
 $log_predictive_call = new Log('/var/log/microvoz/parseX4_llamadas_predictivas.log', true);
 $log_manual_call = new Log('/var/log/microvoz/parseX4_llamadas_manuales.log', true);
 $log_inbound_call = new Log('/var/log/microvoz/parseX4_llamadas_entrantes.log', true);
+$log_ivr_call = new Log('/var/log/microvoz/parseX4_llamadas_ivr.log', true);
 
 $db = new ConectorDB(
     'parseX',
@@ -37,6 +40,9 @@ $manual_call = new ManualCalls\ManualCalls($record_manual, $db, $log_manual_call
 $record_inbound = new InboundCalls\InboundRecord($db, 'asterisk.cc_entrantes');
 $inbound_call = new InboundCalls\InboundCalls($record_inbound, $db, $log_inbound_call);
 
+$ivr_record = new IvrCalls\IvrRecord($db, 'asterisk.cc_ivr');
+$ivr_call = new IvrCalls\IvrCalls($ivr_record, $db, $log_ivr_call);
+
 $parse = new ParseCalls(5);
 
-$parse->start($manual_call, $predictive_call, $inbound_call);
+$parse->start($manual_call, $predictive_call, $inbound_call, $ivr_call);

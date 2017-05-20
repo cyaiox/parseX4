@@ -23,12 +23,14 @@ class ParseCalls
     public function start(
         ManualCalls\ManualCalls $manual_calls,
         PredictiveCalls\PredictiveCalls $predictive_calls,
-        InboundCalls\InboundCalls $inbound_calls
+        InboundCalls\InboundCalls $inbound_calls,
+        IvrCalls\IvrCalls $ivr_calls
     ) {
         while (true) {
             $manual_calls->parseCall();
             $predictive_calls->parseCall();
             $inbound_calls->parseCall();
+            $ivr_calls->parseCall();
             sleep($this->delay);
         }
     }

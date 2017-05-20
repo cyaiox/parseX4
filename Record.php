@@ -47,7 +47,7 @@ class Record
     protected $saldo;
     protected $id_moneda;
     protected $tipo_cliente;
-    protected $costo_llamado;
+    protected $costo_llamado = 0;
     protected $valor_llamado = 0;
 
     public function __construct(ConectorDB $db, $table)

@@ -44,7 +44,7 @@ class ManualCalls extends CallCenterCalls
                 );
             }
 
-            $this->joinLlamadoGestion($this->registrarMovimiento(), $this->getIDGestion());
+            $this->joinLlamadoGestion($this->registrarMovimiento(), $this->record->getIDGestion());
             $this->log->log(
                 "Record procesado correctamente",
                 $this->record->getTipo(),

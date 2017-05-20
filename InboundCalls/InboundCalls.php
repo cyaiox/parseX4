@@ -35,6 +35,7 @@ class InboundCalls extends CallCenterCalls
                 $this->record->getTipo(),
                 $this->record->getID()
             );
+
             if ($this->record->getEstado() == $this->ESTADOS['ATENDIDOS']['HANGUP']) {
                 $this->log->log(
                     "Record contactado procesado correctamente",
@@ -78,7 +79,11 @@ class InboundCalls extends CallCenterCalls
             $this->setPenalty('id_agente', $this->record->getIDAgente());
             $this->setPenalty('interno', $this->record->getInterno());
 
-            if ($this->registrarMovimiento()) {
+            $id_movimiento = $this->registrarMovimiento();
+
+            $this->joinLlamadoGestion($id_movimiento, $this->record->getIDGestion());
+
+            if ($id_movimiento) {
                 if (!$this->record->deleteRecord()) {
                     $this->log->log("Error eliminando el registro", $this->record->getTipo(), $this->record->getID());
                 }

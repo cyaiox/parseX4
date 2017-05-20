@@ -34,35 +34,25 @@ class PredictiveCalls extends CallCenterCalls
                 $this->record->getTipo(),
                 $this->record->getID()
             );
+
             if ($this->record->getEstado() == $this->ESTADOS['ATENDIDOS']['HANGUP']) {
-                if ($this->registrarMovimiento() && $this->procesarContactado()) {
-                    $this->setTime('interno', $this->record->getInterno());
-                    $this->setTime('id_agente', $this->record->getIDAgente());
-                    $this->log->log(
-                        "Record contactado procesado correctamente",
-                        $this->record->getTipo(),
-                        $this->record->getID()
-                    );
-                    if (! $this->record->deleteRecord()) {
-                        $this->log->log("Error eliminando el registro", $this->record->getTipo(), $this->record->getID());
-                    }
-                }
+                $this->procesarContactado();
+                $this->setTime('interno', $this->record->getInterno());
+                $this->setTime('id_agente', $this->record->getIDAgente());
+
+                $this->log->log(
+                    "Record contactado procesado correctamente",
+                    $this->record->getTipo(),
+                    $this->record->getID()
+                );
             } else if($this->verificarEstado($this->record->getEstado(), ['CONTESTADOR'], $this->ESTADOS)) {
                 $this->procesarNoContactado();
-                if ($this->registrarMovimiento()) {
-                    $this->log->log(
-                        "Record no contactado procesado correctamente",
-                        $this->record->getTipo(),
-                        $this->record->getID()
-                    );
-                    if (! $this->record->deleteRecord()) {
-                        $this->log->log(
-                            "Error eliminando el registro",
-                            $this->record->getTipo(),
-                            $this->record->getID()
-                        );
-                    }
-                }
+
+                $this->log->log(
+                    "Record no contactado procesado correctamente",
+                    $this->record->getTipo(),
+                    $this->record->getID()
+                );
             } else if(
                 $this->verificarEstado(
                     $this->record->getEstado(),
@@ -70,8 +60,20 @@ class PredictiveCalls extends CallCenterCalls
                     $this->ESTADOS
                 )
             ) {
-                $this->joinLlamadoGestion($this->registrarMovimiento(), $this->record->getIDGestion());
                 $this->procesarNoContactado();
+
+                $this->log->log(
+                    "Record no contactado procesado correctamente",
+                    $this->record->getTipo(),
+                    $this->record->getID()
+                );
+            }
+
+            $id_movimiento = $this->registrarMovimiento();
+
+            $this->joinLlamadoGestion($id_movimiento, $this->record->getIDGestion());
+
+            if ($id_movimiento) {
                 if (! $this->record->deleteRecord()) {
                     $this->log->log(
                         "Error eliminando el registro",

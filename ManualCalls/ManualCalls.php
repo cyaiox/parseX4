@@ -44,13 +44,16 @@ class ManualCalls extends CallCenterCalls
                 );
             }
 
-            $this->joinLlamadoGestion($this->registrarMovimiento(), $this->record->getIDGestion());
+            $id_movimiento = $this->registrarMovimiento();
+
+            $this->joinLlamadoGestion($id_movimiento, $this->record->getIDGestion());
             $this->log->log(
                 "Record procesado correctamente",
                 $this->record->getTipo(),
                 $this->record->getID()
             );
-            if (! $this->record->deleteRecord()) {
+
+            if ($id_movimiento && ! $this->record->deleteRecord()) {
                 $this->log->log(
                     "Error eliminando el registro",
                     $this->record->getTipo(),

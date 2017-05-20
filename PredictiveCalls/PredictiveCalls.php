@@ -35,7 +35,7 @@ class PredictiveCalls extends CallCenterCalls
                 $this->record->getID()
             );
             if ($this->record->getEstado() == $this->ESTADOS['ATENDIDOS']['HANGUP']) {
-                if ($this->updateIntegracion($this->registrarMovimiento()) && $this->procesarContactado()) {
+                if ($this->registrarMovimiento() && $this->procesarContactado()) {
                     $this->setTime('interno', $this->record->getInterno());
                     $this->setTime('id_agente', $this->record->getIDAgente());
                     $this->log->log(

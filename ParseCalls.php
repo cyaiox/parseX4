@@ -11,7 +11,7 @@ namespace CallCenter;
 
 class ParseCalls
 {
-    protected $process_name = 'parseX4';
+    protected $process_name = 'parse_llamadas';
     protected $delay;
 
     public function __construct($delay)

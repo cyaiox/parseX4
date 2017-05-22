@@ -19,6 +19,7 @@ class IntegrationRecord extends Record
     protected $id_movimiento;
     protected $id_padre;
     protected $id_hijo;
+    protected $tipo = 'integracion';
 
     public function __construct(ConectorDB $db, $table)
     {

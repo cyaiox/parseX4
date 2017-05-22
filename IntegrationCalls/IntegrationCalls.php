@@ -30,6 +30,10 @@ class IntegrationCalls extends CallCenterCalls
                 $this->record->getID()
             );
 
+            if (isset($this->record->getIDPadre()) || isset($this->record->getIDHijo())) {
+                $this->joinLlamadoGestion($this->record->getIDMovimientoSaldo(), $this->record->getIDGestion());
+            }
+
             if (! $this->record->deleteRecord()) {
                 $this->log->log(
                     "Error eliminando el registro",

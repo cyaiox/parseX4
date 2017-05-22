@@ -107,38 +107,41 @@ class CallCenterCalls
             );
         }
 
-        $sql = "INSERT INTO OP.movimiento_saldo SET 
-                  valor = -{$this->record->getCostoLlamado()}, 
-                  id_canal = '{$this->record->getIDCanal()}', 
-                  id_destinos_softswitch = '{$this->record->getIDDestinosSoftSwitch()}', 
-                  telefono = '{$this->record->getTelefono()}', 
-                  pin = '{$this->record->getPin()}', 
-                  id_campania = '{$this->record->getIDCampania()}', 
-                  id_tarea = '{$this->record->getIDTarea()}', 
-                  id_base = '{$this->record->getIDBase()}', 
-                  id_agente = '{$this->record->getIDAgente()}', 
-                  interno = '{$this->record->getInterno()}', 
-                  id_grabaciones = '{$this->record->getIDGrabaciones()}', 
-                  talking_time_seconds = '{$this->record->getBill()}', 
-                  talking_time = '{$this->record->getTalkingTime()}', 
-                  holding_time = '{$this->record->getHoldingSec()}',
-                  total_time = '{$this->record->getTotalTime()}', 
-                  fecha = Now(), 
-                  costo_prov = 0,
-                  id_destinos = '{$this->record->getIDDestino()}',
-                  tipo = '{$this->record->getTipo()}',
-                  estado = '{$this->parseEstado($this->record->getEstado())}',
-                  test_pid = '',
-                  test_usuario = '', 
-                  formato_discado = '{$this->record->getFormatoDiscado()}',
-                  parse = 1";
+        $sql = "INSERT INTO OP.movimiento_saldo 
+                SET valor = -{$this->record->getCostoLlamado()}, 
+                    id_canal = '{$this->record->getIDCanal()}', 
+                    id_destinos_softswitch = '{$this->record->getIDDestinosSoftSwitch()}', 
+                    telefono = '{$this->record->getTelefono()}', 
+                    pin = '{$this->record->getPin()}', 
+                    id_campania = '{$this->record->getIDCampania()}', 
+                    id_tarea = '{$this->record->getIDTarea()}', 
+                    id_base = '{$this->record->getIDBase()}', 
+                    id_agente = '{$this->record->getIDAgente()}', 
+                    interno = '{$this->record->getInterno()}', 
+                    id_grabaciones = '{$this->record->getIDGrabaciones()}', 
+                    talking_time_seconds = '{$this->record->getBill()}', 
+                    talking_time = '{$this->record->getTalkingTime()}', 
+                    holding_time = '{$this->record->getHoldingSec()}',
+                    total_time = '{$this->record->getTotalTime()}', 
+                    fecha = Now(), 
+                    costo_prov = 0,
+                    id_destinos = '{$this->record->getIDDestino()}',
+                    tipo = '{$this->record->getTipo()}',
+                    estado = '{$this->parseEstado($this->record->getEstado())}',
+                    test_pid = '',
+                    test_usuario = '', 
+                    formato_discado = '{$this->record->getFormatoDiscado()}',
+                    parse = 1";
+
         $this->log->log("SQL a realizar: [{$sql}]", $this->record->getTipo(), $this->record->getID());
+
         if($this->db->query($sql)) {
             $this->log->log(
                 "Registro realizado satisfactoriamente en OP.movimiento_saldo con id: [{$this->db->lastInsertId()}]",
                 $this->record->getTipo(),
                 $this->record->getID()
             );
+
             return $this->db->lastInsertId();
         }
 
@@ -146,6 +149,7 @@ class CallCenterCalls
             "Registro no realizado en OP.movimiento_saldo",
             $this->record->getTipo(),
             $this->record->getID());
+
         return false;
     }
 
@@ -170,21 +174,25 @@ class CallCenterCalls
                 $this->record->getTipo(),
                 $this->record->getID()
             );
+
             $sql = "INSERT INTO OP.comunicaciones_gestiones 
                     SET comunicaciones_tabla = 'movimiento_saldo', 
                         id_comunicacion = '{$id_movimiento}', 
                         id_gestion = '{$id_gestion}'";
+
             $this->log->log(
                 "SQL a realizar [{$sql}]",
                 $this->record->getTipo(),
                 $this->record->getID()
             );
+
             if ($this->db->query($sql)) {
                 $this->log->log(
                     "Insert realizado satisfactoriamente",
                     $this->record->getTipo(),
                     $this->record->getID()
                 );
+
                 return true;
             } else {
                 $this->log->log(
@@ -205,14 +213,17 @@ class CallCenterCalls
             $this->record->getTipo(),
             $this->record->getID()
         );
+
         $sql = "UPDATE asterisk.cc_integracion 
                 SET id_movimiento = '{$id_movimiento}' 
                 WHERE id = {$this->record->getIDGestion()}";
+
         $this->log->log(
             "SQL a realizar [{$sql}]",
             $this->record->getTipo(),
             $this->record->getID()
         );
+
         return $this->db->query($sql);
     }
 
@@ -223,10 +234,13 @@ class CallCenterCalls
             $this->record->getTipo(),
             $this->record->getID()
         );
+
         $sql = "UPDATE {$this->record->getBase()} 
                 SET estado = '{$this->record->getEstado()}', repite_resultado = 0
                 WHERE idtarea = '{$this->record->getIDTarea()}'";
+
         $this->log->log("SQL a realizar: [{$sql}]", $this->record->getTipo(), $this->record->getID());
+
         return $this->db->query($sql);
     }
 
@@ -237,6 +251,7 @@ class CallCenterCalls
             $this->record->getTipo(),
             $this->record->getID()
         );
+
         $sql = "UPDATE {$this->record->getBase()} 
                 SET procesar = 9, 
                     subprocesar = NULL, 
@@ -245,11 +260,13 @@ class CallCenterCalls
                     repite_resultado = repite_resultado + 1 
                 WHERE idtarea = '{$this->record->getIDTarea()}'
                 AND estado = {$this->record->getEstado()}";
+
         $this->log->log(
             "SQL a realizar [{$sql}]",
             $this->record->getTipo(),
             $this->record->getID()
         );
+
         $this->db->query($sql);
 
         # $this->setAgendadaPerdida();
@@ -272,14 +289,17 @@ class CallCenterCalls
             $this->record->getTipo(),
             $this->record->getID()
         );
+
         $sql = "SELECT id_agendado 
                 FROM OP.agendados_agente 
                 WHERE id_agendado = '{$this->record->getIDAgendado()}' AND modo_agenda = '0'";
+
         $this->log->log(
             "SQL a realizar [{$sql}]",
             $this->record->getTipo(),
             $this->record->getID()
         );
+
         $record = $this->db->query($sql);
 
         if ($record) {
@@ -292,12 +312,15 @@ class CallCenterCalls
     public function aumentarPenalty()
     {
         $sql = "SELECT usar_penalty FROM asterisk.campanias WHERE id = '{$this->record->getIDCampania()}'";
-        list($usar_penalty) = $this->db->query($sql, 1);
 
-        if ($usar_penalty) {
+        $record = $this->db->query($sql);
+
+        if ($record[0]['usar_penalty']) {
             $sql = "UPDATE {$this->record->getBase()} 
                     SET penalty = penalty + 1 
                     WHERE idtarea = '{$this->record->getIDTarea()}'";
+
+            $this->db->query($sql);
         }
     }
 
@@ -308,14 +331,17 @@ class CallCenterCalls
             $this->record->getTipo(),
             $this->record->getID()
         );
+
         $sql = "UPDATE asterisk.queue_login 
                 SET estado = '" . (($es_propietaria) ? 'IN' : 'OUT') . "' 
                 WHERE id_agente = '{$this->record->getIDAgente()}' AND estado = 'AGENDA'";
+
         $this->log->log(
             "SQL a realizar [{$sql}]",
             $this->record->getTipo(),
             $this->record->getID()
         );
+
         $this->db->query($sql);
     }
 
@@ -331,6 +357,7 @@ class CallCenterCalls
                 FROM asterisk.entrantes
                 WHERE {$search_field} = {$search_value}
                 GROUP BY id_campania";
+
         $records = $this->db->query($sql);
 
         if ($records) {
@@ -358,6 +385,7 @@ class CallCenterCalls
             if ($record) {
                 $costo_llamado = $this->costoLlamado($record[0]['minutos'], $this->record->getValorLlamado());
                 $saldo = $this->record->getSaldo() - $costo_llamado;
+
                 $sql = "UPDATE OP.clientes 
                         SET valor = -{$costo_llamado},
                             saldo = {$saldo},
@@ -369,13 +397,12 @@ class CallCenterCalls
                             id_grabaciones = '{$this->record->getIDGrabaciones()}', 
                             talking_time = '{$record[0]['minutos']}' 
                         WHERE pin = '{$this->record->getPin()}'";
+
                 $this->db->query($sql);
 
                 $this->record->setCostoLlamado($costo_llamado);
             }
         }
-
-        return false;
     }
 
     public function costoLlamado($minutos, $costo)

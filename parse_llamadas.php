@@ -9,12 +9,14 @@ require "./ManualCalls/ManualCalls.php";
 require "./PredictiveCalls/PredictiveCalls.php";
 require "./InboundCalls/InboundCalls.php";
 require "./IvrCalls/IvrCalls.php";
+require "./IntegrationCalls/IntegrationCalls.php";
 require "./conectorDB.php";
 require "./Record.php";
 require "./ManualCalls/ManualRecord.php";
 require "./PredictiveCalls/PredictiveRecord.php";
 require "./InboundCalls/InboundRecord.php";
 require "./IvrCalls/IvrRecord.php";
+require "./IntegrationCalls/IntegrationRecord.php";
 require './KillProcess.php';
 
 $ini_file = parse_ini_file('/etc/microvoz/sistema.ini', true);
@@ -23,6 +25,7 @@ $log_predictive_call = new Log('/var/log/microvoz/parseX4_llamadas_predictivas.l
 $log_manual_call = new Log('/var/log/microvoz/parseX4_llamadas_manuales.log', true);
 $log_inbound_call = new Log('/var/log/microvoz/parseX4_llamadas_entrantes.log', true);
 $log_ivr_call = new Log('/var/log/microvoz/parseX4_llamadas_ivr.log', true);
+$log_integration_call = new Log('/var/log/microvoz/parseX4_llamadas_integracion.log', true);
 
 $db = new ConectorDB(
     'parseX',
@@ -43,6 +46,9 @@ $inbound_call = new InboundCalls\InboundCalls($record_inbound, $db, $log_inbound
 $ivr_record = new IvrCalls\IvrRecord($db, 'asterisk.cc_ivr');
 $ivr_call = new IvrCalls\IvrCalls($ivr_record, $db, $log_ivr_call);
 
+$integration_record = new IntegrationCalls\IntegrationRecord($db, 'asterisk.cc_integracion');
+$integration_call = new IntegrationCalls\IntegrationCalls($integration_record, $db, $log_integration_call);
+
 $parse = new ParseCalls(5);
 
-$parse->start($manual_call, $predictive_call, $inbound_call, $ivr_call);
+$parse->start($manual_call, $predictive_call, $inbound_call, $ivr_call, $integration_call);

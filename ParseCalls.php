@@ -24,13 +24,15 @@ class ParseCalls
         ManualCalls\ManualCalls $manual_calls,
         PredictiveCalls\PredictiveCalls $predictive_calls,
         InboundCalls\InboundCalls $inbound_calls,
-        IvrCalls\IvrCalls $ivr_calls
+        IvrCalls\IvrCalls $ivr_calls,
+        IntegrationCalls\IntegrationCalls $integration_calls
     ) {
         while (true) {
             $manual_calls->parseCall();
             $predictive_calls->parseCall();
             $inbound_calls->parseCall();
             $ivr_calls->parseCall();
+            $integration_calls->parseCall();
             sleep($this->delay);
         }
     }

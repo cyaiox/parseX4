@@ -28,7 +28,7 @@ class KillProcess
 
     private function getPreviousRunningProcesses($process_name)
     {
-        $list_previous_running_processes = shell_exec("ps fax | grep {$process_name} | grep -v grep");
+        $list_previous_running_processes = shell_exec("ps fax | grep {$process_name} | grep -v grep | grep -v " . getmypid());
         return explode("\n", $list_previous_running_processes);
     }
 }

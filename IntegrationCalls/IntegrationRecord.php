@@ -17,6 +17,8 @@ class IntegrationRecord extends Record
 {
     protected $table = 'asterisk.cc_integracion';
     protected $id_movimiento;
+    protected $id_padre;
+    protected $id_hijo;
 
     public function __construct(ConectorDB $db, $table)
     {
@@ -49,5 +51,15 @@ class IntegrationRecord extends Record
     public function getIDGestion()
     {
         return $this->id;
+    }
+
+    public function getIDPadre()
+    {
+        return $this->id_padre;
+    }
+
+    public function getIDHijo()
+    {
+        return $this->id_hijo;
     }
 }

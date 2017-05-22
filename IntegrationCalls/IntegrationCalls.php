@@ -30,8 +30,12 @@ class IntegrationCalls extends CallCenterCalls
                 $this->record->getID()
             );
 
-            if (isset($this->record->getIDPadre()) || isset($this->record->getIDHijo())) {
-                $this->joinLlamadoGestion($this->record->getIDMovimientoSaldo(), $this->record->getIDGestion());
+            if ($this->record->getIDPadre() || $this->record->getIDHijo()) {
+                $this->joinLlamadoGestion(
+                    $this->record->getIDGestion(),
+                    $this->record->getIDPadre(),
+                    $this->record->getIDHijo()
+                );
             }
 
             if (! $this->record->deleteRecord()) {
@@ -44,5 +48,15 @@ class IntegrationCalls extends CallCenterCalls
         }
 
         $this->record->getRecords();
+    }
+
+    public function joinLlamadoGestion($id_gestion, $id_padre=0, $id_hijo=0)
+    {
+        $sql = "INSERT INTO OP.comunicaciones_gestiones (comunicaciones_tabla, id_comunicacion, id_gestion) 
+                SELECT comunicaciones_tabla, id_comunicacion, {$id_gestion}
+                FROM OP.comunicaciones_gestiones
+                WHERE id_gestion = " . ($id_padre ? $id_padre : $id_hijo);
+
+        return $this->db->query($sql);
     }
 }

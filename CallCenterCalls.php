@@ -353,22 +353,26 @@ class CallCenterCalls
 
     public function setPenalty($search_field, $search_value)
     {
-        $sql = "SELECT max(penalty) AS maxpenalty, id_campania
-                FROM asterisk.entrantes
-                WHERE {$search_field} = {$search_value}
-                GROUP BY id_campania";
+        if ($search_value) {
+            $sql = "SELECT max(penalty) AS maxpenalty, id_campania
+                    FROM asterisk.entrantes
+                    WHERE {$search_field} = {$search_value}
+                    GROUP BY id_campania";
 
-        $records = $this->db->query($sql);
+            $records = $this->db->query($sql);
 
-        if ($records) {
-            foreach ($records as $record) {
-                $record['maxpenalty'] += 1;
-                $sql = "UPDATE asterisk.entrantes 
-                        SET penalty = {$record['maxpenalty']} 
-                        WHERE {$search_field} = '{$search_value}' AND id_campania = '{$record['id_campania']}'";
-                $this->db->query($sql);
+            if ($records) {
+                foreach ($records as $record) {
+                    $record['maxpenalty'] += 1;
+                    $sql = "UPDATE asterisk.entrantes 
+                            SET penalty = {$record['maxpenalty']} 
+                            WHERE {$search_field} = '{$search_value}' AND id_campania = '{$record['id_campania']}'";
+                    $this->db->query($sql);
+                }
             }
         }
+
+        return false;
     }
 
     public function tarifar()

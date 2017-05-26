@@ -38,6 +38,14 @@ class InboundRecord extends Record
         $this->iterator->rewind();
     }
 
+    public function setValues(array $result)
+    {
+        foreach ($result as $key => $value)
+        {
+            $this->$key = $value;
+        }
+    }
+
     public function deleteRecord()
     {
         $sql = "DELETE FROM {$this->table} WHERE idtarea = '{$this->id_tarea}'";
